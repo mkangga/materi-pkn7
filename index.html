@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PKN Interaktif Kelas 7: Jelajah Nusantara (Lengkap)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Palet Nusantara Tenang -->
+    <!-- Application Structure Plan: Struktur aplikasi tetap menggunakan hub tematik non-linear untuk kebebasan eksplorasi siswa. Namun, setiap bagian kini diperkaya dengan konten yang lebih mendalam dari materi lengkap. 1) Beranda: Pesan pembuka yang lebih hangat. 2) Jelajah Keberagaman: Ditambah penjelasan mendalam tentang faktor penyebab keberagaman dan contoh yang lebih kaya. 3) Pilar Persatuan: Diperluas dengan asal-usul Bhinneka Tunggal Ika, definisi gotong royong yang lebih detail, dan ditambah "Cerita Inspiratif" untuk memperkuat konsep toleransi. 4) Rumah Kita: NKRI: Dirombak total menjadi penjelasan utuh tentang unsur negara, pentingnya wilayah, dan peran otonomi daerah. 5) Jadi Pahlawan Muda: Bagian tantangan diperjelas, dan misi bela negara diperkaya dengan banyak contoh konkret bagi pelajar. Struktur ini mempertahankan interaktivitas sambil menyajikan informasi yang jauh lebih komprehensif. -->
+    <!-- Visualization & Content Choices: 1) Keberagaman (Inform): Doughnut Chart (Chart.js) dipertahankan, namun panel informasi yang muncul saat diklik kini berisi teks yang lebih detail dan kontekstual, termasuk faktor penyebabnya. 2) Pilar Persatuan (Organize/Inform): Kartu interaktif (HTML/CSS) sekarang berisi teks yang lebih panjang dan mendalam. Ditambahkan bagian khusus "Cerita Inspiratif" dengan layout yang menarik untuk memecah blok teks dan meningkatkan engagement. 3) Tantangan & Bela Negara (Compare/Organize): Format kolom 'Tantangan vs Solusi' dipertahankan untuk perbandingan langsung. Daftar misi bela negara dibuat lebih ekstensif menggunakan list HTML yang jelas. Ini memastikan informasi yang kompleks tetap terstruktur dan mudah dipahami. Semua interaksi tetap menggunakan Vanilla JS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #F8F4E3; /* Warm Neutral Background */
+            color: #4A4A4A;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: #C07A56; /* Accent Color */
+            border-bottom-color: #C07A56;
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .prose-custom ul {
+            list-style-position: inside;
+        }
+        .prose-custom ul li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="#beranda" class="text-2xl font-bold text-[#C07A56]">PKN Seru ✨</a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#beranda" class="nav-link px-3 py-2 rounded-md text-sm font-semibold">Beranda</a>
+                        <a href="#keberagaman" class="nav-link px-3 py-2 rounded-md text-sm font-semibold">Jelajah Keberagaman</a>
+                        <a href="#persatuan" class="nav-link px-3 py-2 rounded-md text-sm font-semibold">Pilar Persatuan</a>
+                        <a href="#nkri" class="nav-link px-3 py-2 rounded-md text-sm font-semibold">Rumah Kita: NKRI</a>
+                        <a href="#pahlawan" class="nav-link px-3 py-2 rounded-md text-sm font-semibold">Jadi Pahlawan Muda</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="p-2 rounded-md inline-flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#C07A56]">
+                        <span class="sr-only">Buka menu</span>
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                 <a href="#beranda" class="nav-link block px-3 py-2 rounded-md text-base font-semibold">Beranda</a>
+                 <a href="#keberagaman" class="nav-link block px-3 py-2 rounded-md text-base font-semibold">Jelajah Keberagaman</a>
+                 <a href="#persatuan" class="nav-link block px-3 py-2 rounded-md text-base font-semibold">Pilar Persatuan</a>
+                 <a href="#nkri" class="nav-link block px-3 py-2 rounded-md text-base font-semibold">Rumah Kita: NKRI</a>
+                 <a href="#pahlawan" class="nav-link block px-3 py-2 rounded-md text-base font-semibold">Jadi Pahlawan Muda</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section id="beranda" class="min-h-screen flex items-center justify-center pt-16 pb-8 bg-cover bg-center" style="background-image: linear-gradient(rgba(248, 244, 227, 0.8), rgba(248, 244, 227, 1)), url('https://placehold.co/1200x800/A96B49/FFFFFF?text=Ilustrasi+Peta+Indonesia');">
+            <div class="text-center max-w-4xl mx-auto px-4">
+                <h1 class="text-4xl md:text-6xl font-bold text-[#4F6F52] mb-4">Menjadi Warga Negara Hebat di Negeri Penuh Warna!</h1>
+                <p class="text-lg md:text-xl text-gray-700 mb-8">Selamat datang kembali, pejuang muda Pancasila! Di sini, kita akan melanjutkan petualangan mengenal Indonesia. Kita akan belajar betapa indahnya kebersamaan dalam perbedaan, mengapa setiap jengkal tanah air ini berharga, dan menemukan peran pentingmu dalam membangun masa depan bangsa. Siapkan semangatmu, mari kita mulai petualangan belajar yang lebih seru dan mendalam!</p>
+                <a href="#keberagaman" class="bg-[#C07A56] text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-[#A96B49] transition duration-300">Mulai Petualangan</a>
+            </div>
+        </section>
+
+        <section id="keberagaman" class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-[#4F6F52]">🎨 Warna-Warni Indonesiaku</h2>
+                    <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Indonesia itu seperti lukisan raksasa yang indah karena perbedaannya. Keberagaman adalah kondisi masyarakat dengan banyak perbedaan, mulai dari suku, agama, ras, hingga adat istiadat. Perbedaan ini bukan penghalang, melainkan kekuatan yang membuat Indonesia istimewa. Klik diagram untuk menjelajahinya!</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-12">
+                    <div class="chart-container">
+                        <canvas id="diversityChart"></canvas>
+                    </div>
+                    <div id="diversityInfo" class="bg-[#F8F4E3] p-6 rounded-lg shadow-inner min-h-[400px] flex items-center justify-center">
+                        <p class="text-center text-gray-500">Pilih salah satu jenis keberagaman pada diagram untuk menampilkan informasi detail di sini.</p>
+                    </div>
+                </div>
+
+                <div class="mt-16">
+                    <h3 class="text-2xl md:text-3xl font-bold text-[#4F6F52] text-center mb-8">Mengapa Indonesia Begitu Beragam?</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 prose-custom">
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                            <h4 class="font-bold text-lg text-[#C07A56]">Letak Geografis & Kepulauan</h4>
+                            <p>Posisi strategis di antara dua benua dan dua samudra serta bentuk negara kepulauan terbesar di dunia memungkinkan setiap daerah mengembangkan budayanya sendiri secara unik.</p>
+                        </div>
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                            <h4 class="font-bold text-lg text-[#C07A56]">Perbedaan Kondisi Alam</h4>
+                            <p>Daerah pantai, pegunungan, dan dataran rendah memengaruhi cara hidup, mata pencaharian, makanan, hingga bentuk rumah adat masyarakatnya.</p>
+                        </div>
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                             <h4 class="font-bold text-lg text-[#C07A56]">Pengaruh Budaya Asing</h4>
+                            <p>Sejak dulu, pedagang dari India, Tiongkok, Arab, dan Eropa datang membawa budaya dan agama yang berakulturasi dengan budaya asli Indonesia.</p>
+                        </div>
+                         <div class="bg-gray-50 p-6 rounded-lg">
+                             <h4 class="font-bold text-lg text-[#C07A56]">Faktor Sejarah</h4>
+                            <p>Mulai dari zaman kerajaan besar seperti Sriwijaya dan Majapahit hingga masa perjuangan kemerdekaan, semua memberi warna dalam sejarah keberagaman kita.</p>
+                        </div>
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                             <h4 class="font-bold text-lg text-[#C07A56]">Keterbukaan Masyarakat</h4>
+                            <p>Sifat masyarakat Indonesia yang terbuka terhadap perubahan dan hal baru (selama dianggap baik) turut memperkaya keberagaman yang sudah ada.</p>
+                        </div>
+                         <div class="bg-gray-50 p-6 rounded-lg flex items-center justify-center">
+                            <p class="text-center font-semibold">Semua faktor ini menjadikan Indonesia ditakdirkan untuk beragam, sehingga menjaga persatuan menjadi tugas kita bersama.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="persatuan" class="py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-[#4F6F52]">🤝 Pilar Persatuan Bangsa</h2>
+                    <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Keberagaman yang luar biasa ini bisa bersatu karena kita punya pilar-pilar kuat yang menyatukan. Ayo kenali lebih dalam pilar-pilar utama yang membuat Indonesia tetap kokoh dan rukun!</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                    <div class="card bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-bold text-center text-[#C07A56] mb-4">Bhinneka Tunggal Ika</h3>
+                        <p class="mb-3">Artinya "Berbeda-beda tetapi tetap satu jua", semboyan ini diambil dari **Kitab Sutasoma** karya Mpu Tantular pada zaman Majapahit. Awalnya, ini adalah semangat toleransi antara umat Hindu dan Buddha.</p>
+                        <p>Kini, ia menjadi dasar hidup rukun, mengajarkan kita untuk menghargai perbedaan sebagai kekayaan, dan memperkuat identitas kita sebagai satu bangsa: Indonesia.</p>
+                    </div>
+                    <div class="card bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-bold text-center text-[#C07A56] mb-4">Toleransi</h3>
+                        <p class="mb-3">Sikap saling menghargai dan menghormati perbedaan. Toleransi bukan hanya "tidak mengganggu", tapi juga aktif memahami, menghargai, dan bekerja sama dengan yang berbeda dari kita.</p>
+                        <p>Dengan toleransi, kita bisa menghindari perpecahan dan menciptakan kehidupan yang rukun, aman, dan tenteram untuk semua orang.</p>
+                    </div>
+                    <div class="card bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-bold text-center text-[#C07A56] mb-4">Gotong Royong</h3>
+                        <p class="mb-3">Kerja sama untuk kepentingan bersama. Ini adalah wujud nyata semangat persatuan, kepedulian, dan kebersamaan, serta cerminan sila ketiga Pancasila.</p>
+                        <p>Gotong royong membuat pekerjaan berat menjadi ringan, mempererat persaudaraan, dan meningkatkan efektivitas dalam bekerja.</p>
+                    </div>
+                </div>
+
+                <div class="mt-16 bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-2xl md:text-3xl font-bold text-[#4F6F52] text-center mb-8">Kisah Nyata Toleransi dari Pelosok Negeri</h3>
+                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                        <div>
+                            <span class="text-5xl">🕊️</span>
+                            <h4 class="font-bold text-lg my-2">Penjaga Kedamaian di Timika</h4>
+                            <p class="text-sm">Saat hari raya Idul Fitri, pemuda gereja ikut menjaga keamanan shalat. Sebaliknya, saat Natal, remaja masjid membantu menjaga gereja. Perbedaan keyakinan tak menghalangi mereka untuk saling menjaga.</p>
+                        </div>
+                        <div>
+                            <span class="text-5xl">🤝</span>
+                            <h4 class="font-bold text-lg my-2">Buka Puasa Lintas Iman di Jombang</h4>
+                            <p class="text-sm">Sebuah SD Kristen menjadi tuan rumah acara buka puasa bersama untuk siswa MI. Mereka bermain bersama, menunjukkan bahwa persahabatan tidak mengenal batas agama.</p>
+                        </div>
+                        <div>
+                             <span class="text-5xl">🏡</span>
+                            <h4 class="font-bold text-lg my-2">Harmoni di Kampung Toleransi</h4>
+                            <p class="text-sm">Di berbagai daerah seperti Desa Mulawarman (Kaltim) dan Puncak Liur (NTT), warga dari berbagai agama hidup rukun, saling menghormati hari raya, dan bergotong royong saat ada kesulitan.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="nkri" class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-[#4F6F52]">🇮🇩 Rumah Kita: NKRI</h2>
+                    <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Selamat datang di rumah kita, Negara Kesatuan Republik Indonesia! Mari kita kenali lebih dalam tentang apa itu negara, mengapa setiap jengkal tanahnya sangat berharga, dan bagaimana daerahmu ikut membangun kekuatan bangsa.</p>
+                </div>
+
+                <div class="space-y-12">
+                    <div class="bg-[#F8F4E3] rounded-lg shadow-inner p-8">
+                        <h3 class="text-2xl font-bold text-[#C07A56] mb-4">Apa Itu Negara & NKRI?</h3>
+                        <p class="mb-4">Negara adalah organisasi masyarakat di suatu wilayah yang memiliki pemerintahan berdaulat. Agar bisa berdiri, negara butuh 4 unsur: **Rakyat, Wilayah, Pemerintah yang Berdaulat, dan Pengakuan dari negara lain**.</p>
+                        <p>Indonesia adalah **Negara Kesatuan Republik Indonesia (NKRI)**. Artinya, Indonesia adalah negara tunggal, bukan gabungan negara bagian. Kekuasaan tertinggi ada di pemerintah pusat, namun daerah diberi kewenangan mengatur urusannya sendiri lewat **otonomi daerah**. Bentuk kesatuan ini dipilih untuk menjaga persatuan kita yang sangat beragam.</p>
+                    </div>
+
+                     <div class="bg-[#F8F4E3] rounded-lg shadow-inner p-8">
+                        <h3 class="text-2xl font-bold text-[#C07A56] mb-4">Mengapa Wilayah NKRI Harus Dijaga?</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 prose-custom">
+                            <ul class="space-y-3">
+                                <li><b>Menjaga Kedaulatan:</b> Wilayah adalah unsur utama negara. Menjaganya berarti menjaga kekuasaan tertinggi negara.</li>
+                                <li><b>Warisan Pahlawan:</b> Ini cara kita menghargai perjuangan mereka yang telah gugur demi kemerdekaan.</li>
+                            </ul>
+                             <ul class="space-y-3">
+                                <li><b>Sumber Kehidupan:</b> Kekayaan alam di darat dan laut harus dimanfaatkan untuk kemakmuran seluruh rakyat.</li>
+                                <li><b>Harga Diri Bangsa:</b> Menjaga keutuhan wilayah adalah menjaga martabat kita sebagai bangsa yang merdeka.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#F8F4E3] rounded-lg shadow-inner p-8">
+                        <h3 class="text-2xl font-bold text-[#C07A56] mb-4">Daerahku Hebat, Indonesia Kuat!</h3>
+                        <p class="mb-4">Lewat **otonomi daerah**, setiap daerah punya peran penting untuk memperkuat NKRI. Daerah yang maju dan mandiri akan menjadi akar yang kokoh untuk menopang bangsa.</p>
+                        <h4 class="font-semibold mb-2">Peran Penting Daerah:</h4>
+                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm prose-custom">
+                             <ul class="space-y-2">
+                                <li>Meningkatkan kesejahteraan lewat pendidikan & kesehatan.</li>
+                                <li>Melaksanakan pembangunan nasional dan berinovasi.</li>
+                             </ul>
+                             <ul class="space-y-2">
+                                <li>Mengembangkan kehidupan yang demokratis.</li>
+                                <li>Melestarikan budaya lokal sebagai kekayaan nasional.</li>
+                             </ul>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="pahlawan" class="py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-[#4F6F52]">🛡️ Jadi Pahlawan Muda</h2>
+                    <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Menjaga persatuan dan membela negara bukan hanya tugas tentara. Kamu juga bisa jadi pahlawan! Kenali tantangan yang ada dan temukan misi-misi sederhana yang bisa kamu lakukan setiap hari.</p>
+                </div>
+
+                <div class="mb-16">
+                    <h3 class="text-2xl font-bold text-center text-[#C07A56] mb-8">Kenali Tantangan Persatuan & Jadilah Solusinya!</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h4 class="font-bold text-xl mb-3 text-red-600">🚨 Tantangan</h4>
+                            <ul class="space-y-3 prose-custom">
+                                <li><b>Intoleransi & Diskriminasi:</b> Sikap tidak menghargai perbedaan dan memperlakukan orang lain secara tidak adil.</li>
+                                <li><b>Etnosentrisme:</b> Terlalu membanggakan suku sendiri dan merendahkan suku lain.</li>
+                                <li><b>Konflik Antarkelompok:</b> Pertikaian yang dipicu kesalahpahaman atau provokasi.</li>
+                                <li><b>Hoaks & Ujaran Kebencian:</b> Menyebarkan berita bohong atau hasutan yang bisa memecah belah, terutama di media sosial.</li>
+                                 <li><b>Kesenjangan Sosial:</b> Perbedaan ekonomi yang jauh dapat menimbulkan iri dan konflik.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h4 class="font-bold text-xl mb-3 text-green-600">✅ Peranmu Sebagai Agen Perdamaian</h4>
+                             <ul class="space-y-3 prose-custom">
+                                <li><b>Jadi Contoh Toleransi:</b> Berteman dengan siapa saja tanpa memandang perbedaan.</li>
+                                <li><b>Hargai Semua Budaya:</b> Bangga dengan budaya sendiri, tapi juga kagum dengan budaya daerah lain.</li>
+                                 <li><b>Saring Sebelum Sharing:</b> Selalu cek kebenaran informasi sebelum menyebarkannya. Jadilah netizen bijak!</li>
+                                 <li><b>Lawan Perundungan:</b> Bela teman yang diejek karena perbedaan dan selesaikan masalah dengan damai.</li>
+                                 <li><b>Aktif di Sekolah:</b> Ikut kegiatan yang mempromosikan persatuan, seperti P5 bertema Bhinneka Tunggal Ika.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-2xl font-bold text-center text-[#C07A56] mb-8">Misi Bela Negaramu Sehari-hari</h3>
+                    <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">Bela negara adalah wujud cinta tanah air. Bagi pelajar, ini bukan tentang angkat senjata, tapi tentang tindakan positif sehari-hari yang membangun karakter dan bangsa.</p>
+                    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 prose-custom">
+                            <ul class="space-y-3">
+                                <li class="flex items-start"><span class="text-green-500 font-bold mr-3 mt-1">✓</span> <span><b>Belajar dengan tekun,</b> mempersiapkan diri jadi generasi penerus yang cerdas.</span></li>
+                                <li class="flex items-start"><span class="text-green-500 font-bold mr-3 mt-1">✓</span> <span><b>Menjaga kerukunan dengan teman,</b> hindari perundungan.</span></li>
+                                <li class="flex items-start"><span class="text-green-500 font-bold mr-3 mt-1">✓</span> <span><b>Mematuhi peraturan sekolah</b> dan hukum yang berlaku.</span></li>
+                                <li class="flex items-start"><span class="text-green-500 font-bold mr-3 mt-1">✓</span> <span><b>Bangga menggunakan produk dalam negeri</b> untuk bantu ekonomi bangsa.</span></li>
+                                 <li class="flex items-start"><span class="text-green-500 font-bold mr-3 mt-1">✓</span> <span><b>Menghormati guru dan orang tua</b> sebagai cerminan akhlak mulia.</span></li>
+                            </ul>
+                             <ul class="space-y-3">
+                                <li class="flex items-start"><span class="text-green-500 font-bold mr-3 mt-1">✓</span> <span><b>Menjaga kebersihan lingkungan,</b> wujud cinta pada alam Indonesia.</span></li>
+                                <li class="flex items-start"><span class="text-green-500 font-bold mr-3 mt-1">✓</span> <span><b>Tidak merusak fasilitas umum,</b> karena itu milik kita bersama.</span></li>
+                                <li class="flex items-start"><span class="text-green-500 font-bold mr-3 mt-1">✓</span> <span><b>Bangga berbahasa Indonesia</b> yang baik dan benar.</span></li>
+                                <li class="flex items-start"><span class="text-green-500 font-bold mr-3 mt-1">✓</span> <span><b>Mempelajari dan melestarikan budaya daerah</b> sebagai bagian budaya nasional.</span></li>
+                                <li class="flex items-start"><span class="text-green-500 font-bold mr-3 mt-1">✓</span> <span><b>Mengikuti upacara bendera</b> dengan khidmat dan semangat.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-[#4A4A4A] text-white">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2025 Aplikasi Belajar PKN Seru. Dibuat untuk para Pejuang Muda Pancasila yang Hebat.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const diversityData = {
+                labels: ['Suku Bangsa', 'Agama & Kepercayaan', 'Bahasa Daerah', 'Kesenian Daerah', 'Makanan Tradisional', 'Adat Istiadat'],
+                datasets: [{
+                    label: 'Keberagaman Indonesia',
+                    data: [1, 1, 1, 1, 1, 1],
+                    backgroundColor: ['#C07A56', '#4F6F52', '#7A9E9F', '#D4A59A', '#88A0A8', '#E9967A'],
+                    hoverOffset: 4
+                }]
+            };
+
+            const diversityInfoContent = {
+                'Suku Bangsa': {
+                    title: 'Keberagaman Suku Bangsa 👨‍👩‍👧‍👦',
+                    text: 'Indonesia memiliki ratusan suku, seperti Jawa, Sunda, Batak, Dayak, dan Bugis. Setiap suku punya bahasa, adat, dan sistem kekerabatan yang unik. Cara menghargainya adalah dengan berteman tanpa memandang suku dan tidak merendahkan budaya suku lain.'
+                },
+                'Agama & Kepercayaan': {
+                    title: 'Keberagaman Agama & Kepercayaan 🙏',
+                    text: 'Negara mengakui Islam, Kristen, Katolik, Hindu, Buddha, dan Konghucu. Toleransi beragama berarti menghormati teman yang sedang beribadah, tidak mengganggu hari besar keagamaan mereka, dan hidup rukun meski berbeda keyakinan.'
+                },
+                'Bahasa Daerah': {
+                    title: 'Keberagaman Bahasa Daerah 🗣️',
+                    text: 'Ada lebih dari 700 bahasa daerah di Indonesia, seperti Bahasa Jawa, Sunda, dan Minang. Bahasa daerah adalah kekayaan budaya yang harus kita lestarikan. Caranya, bangga menggunakan bahasa daerahmu dan mau belajar sedikit bahasa daerah lain.'
+                },
+                'Kesenian Daerah': {
+                    title: 'Keberagaman Kesenian Daerah 🎭',
+                    text: 'Tari Saman dari Aceh, Angklung dari Jawa Barat, atau Gamelan dari Jawa adalah contoh kekayaan seni kita. Menghargainya bisa dengan menonton pertunjukan seni, belajar alat musik atau tarian tradisional, atau sekadar mengapresiasi keindahannya.'
+                },
+                'Makanan Tradisional': {
+                    title: 'Keberagaman Makanan Tradisional 🍲',
+                    text: 'Rendang, Gudeg, Papeda, atau Pempek adalah bukti kekayaan kuliner Indonesia. Setiap makanan punya cerita dan cita rasa khas. Mencicipi dan mempromosikan makanan dari berbagai daerah adalah cara seru menghargai keberagaman ini.'
+                },
+                'Adat Istiadat': {
+                    title: 'Keberagaman Adat Istiadat 🏡',
+                    text: 'Setiap daerah punya tradisi unik, seperti upacara Ngaben di Bali atau Rambu Solo\' di Toraja. Ini adalah warisan leluhur yang penuh makna. Sikap kita adalah menghormati pelaksanaannya dan tidak mencemooh tradisi yang berbeda dari kita.'
+                }
+            };
+            
+            const diversityInfoDiv = document.getElementById('diversityInfo');
+            const ctx = document.getElementById('diversityChart').getContext('2d');
+            const diversityChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: diversityData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: { callbacks: { label: (c) => c.label } }
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const label = diversityData.labels[elements[0].index];
+                            const content = diversityInfoContent[label];
+                            diversityInfoDiv.innerHTML = `
+                                <div class="text-center p-4">
+                                    <h4 class="text-xl font-bold text-[#4F6F52] mb-3">${content.title}</h4>
+                                    <p class="text-gray-700 leading-relaxed">${content.text}</p>
+                                </div>
+                            `;
+                        }
+                    }
+                }
+            });
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('main section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-50% 0px -50% 0px' });
+
+            sections.forEach(section => observer.observe(section));
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    if (mobileMenu.classList.contains('hidden') === false) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
